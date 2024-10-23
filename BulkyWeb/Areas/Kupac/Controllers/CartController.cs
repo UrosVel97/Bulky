@@ -152,7 +152,7 @@ namespace BulkyWeb.Areas.Kupac.Controllers
                 var options = new Stripe.Checkout.SessionCreateOptions //Opcije za kreiranje sesije
 				{
 					SuccessUrl = domain + $"kupac/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}", //Kada se uspesno izvrsi placanje, 'Stripe' ce da preusmeri korisnika na Action Metodu 'OrderConfirmation()'
-					CancelUrl = domain + "customer/cart/index", //Kada korisnik klikne na dugme 'Vrati se nazad' prebacice ga na ovai pogled 'Index.cshtml'
+					CancelUrl = domain + "kupac/cart/index", //Kada korisnik klikne na dugme 'Vrati se nazad' prebacice ga na ovai pogled 'Index.cshtml'
 					LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(), //Ovo je lista artikla koje je kupac narucio i koji ce se prikazati na 'Stripe' stranici
 					Mode = "payment", //Mod sesije
 				};

@@ -1,0 +1,55 @@
+﻿@page
+@model BulkyWebRazor_Temp.Pages.Categories.EditModel
+
+
+
+<form method="post">
+    <input hidden asp-for="Kategorija.Id" />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary"> Azuriraj Kategoriju</h2>
+            <hr />
+        </div>
+
+        <div asp-validation-summary="All"></div>
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Kategorija.Name"></label>
+
+
+            <input asp-for="Kategorija.Name" class="form-control" data-val-required="Polje 'Naziv kategorije' je obavezno!!" />
+
+            <span asp-validation-for="Kategorija.Name" class="text-danger"></span>
+
+        </div>
+        <div class="mb-3 row p-1">
+            <label asp-for="Kategorija.DisplayOrder"></label>
+            <input asp-for="Kategorija.DisplayOrder" class="form-control" data-val-required="Polje 'Redosled prikazivanja' je obavezno!!" />
+            <span asp-validation-for="Kategorija.DisplayOrder" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-6 col-md-3">
+
+                <button type="submit" class="btn btn-primary form-control">Azurraj</button>
+            </div>
+            <div class="col-6 col-md-3">
+                <a asp-page="/Categories/Index" class="btn btn-outline-secondary border form-control">
+                    Vrati se nazad
+                </a>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+
+<!--Za validacije na strani klijenta, moramo da ubacimo  '_ValidationScriptsPartial.cshtml' fajl koji se
+    nalazi u direktorijumu 'Shared', a taj direktorijum se nalazi u direktorijumu 'Views'.
+    '_ValidationScriptsPartial.cshtml' fajl sadrzi JQuerry skripte koji proveravaju vrednosti odredjenih atributa
+    'input' elemenata i na osnovu toga gledaju da li vrednost 'input' elementa se pridrzava ogranicenja.
+-->
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

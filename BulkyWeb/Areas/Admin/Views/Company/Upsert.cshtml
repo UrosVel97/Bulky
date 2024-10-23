@@ -1,0 +1,118 @@
+﻿@model Company
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">@(Model.Id == 0 ? "Kreiraj" : "Azuriraj") Kompaniju  </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mora da se naglasi da atribut 'enctype' ima vrednost 'multipart/form-data'. U suprotnom
+        nece da radi file upload.
+    -->
+    <div class="card-body p-4">
+        <form method="post">
+            <input asp-for="Id" hidden />
+            <div class="row">
+                <div class="col-7">
+                    <div class="border p-3 mt-4">
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Name"></label>
+                            <input asp-for="Name" class="form-control" data-val-required="Polje 'Name' je obavezno!!" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="StreetAddress"></label>
+                            <input asp-for="StreetAddress" class="form-control" data-val-required="Polje 'StreetAddress' je obavezno!!" />
+                            <span asp-validation-for="StreetAddress" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="City"></label>
+                            <input asp-for="City" class="form-control" data-val-required="Polje 'City' je obavezno!!" />
+                            <span asp-validation-for="City" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="State"></label>
+                            <input asp-for="State" class="form-control" data-val-required="Polje 'State' je obavezno!!" />
+                            <span asp-validation-for="State" class="text-danger"></span>
+
+                        </div>
+
+
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="PostalCode"></label>
+                            <input asp-for="PostalCode" class="form-control" data-val-required="Polje 'Lista PostalCode' je obavezno!!" />
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="PhoneNumber"></label>
+                            <input asp-for="PhoneNumber" class="form-control" data-val-required="Polje 'PhoneNumber' je obavezno!!" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
+                        </div>
+
+                        
+
+
+
+                        
+
+                        <div class="row">
+
+
+                            <div class="col-6 col-md-3">
+                                @if (Model.Id == 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Kreiraj</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Azuriraj</button>
+                                }
+                            </div>
+
+                            <div class="col-6 col-md-3">
+
+                                <a asp-area="Admin" asp-controller="Company" asp-action="Index" class="btn btn-outline-secondary border form-control">
+                                    Vrati se nazad
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
+
+
+

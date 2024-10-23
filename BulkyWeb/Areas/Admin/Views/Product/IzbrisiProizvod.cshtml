@@ -1,0 +1,108 @@
+﻿@model Product
+
+<form method="post">
+    <input hidden asp-for="Id" />
+    <div class="border p-3 mt-4">
+
+        <!--- Stranica je podeljena na red i taj red ima 12 kolona. Svih 12 kolona ce biti dodeljeni elementu <h2> Kreiraj Kategoriju </h2> --->
+        <div class="row pb-2">
+            <h2 class="text-primary"> Izbrisi Proizvod</h2>
+            <hr />
+        </div>
+
+        <!--- U drugom redu svih 12 kolona u tri reda ce biti dodeljeni elementima '<label>', '<input>' i '<span>' --->
+        <div class="mb-3 row p-1">
+
+            <label asp-for="ISBN"></label>
+            <input asp-for="ISBN" disabled class="form-control" data-val-required="Polje 'ISBN' je obavezno!!" />
+            <span asp-validation-for="ISBN" class="text-danger"></span>
+
+        </div>
+
+        <!--- U trecem redu svih 12 kolona ce biti dodeljeni elementima '<label>', '<input>' i '<span>' --->
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Author"></label>
+            <input asp-for="Author" disabled class="form-control" data-val-required="Polje 'Autor' je obavezno!!" />
+            <span asp-validation-for="Author" class="text-danger"></span>
+
+        </div>
+
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Title"></label>
+            <input asp-for="Title" disabled class="form-control" data-val-required="Polje 'Naslov' je obavezno!!" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+
+        </div>
+
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Description"></label>
+            <input asp-for="Description" disabled class="form-control" data-val-required="Polje 'Opis' je obavezno!!" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+
+        </div>
+
+
+
+        <div class="mb-3 row p-1">
+
+            <label asp-for="ListPrice"></label>
+            <input asp-for="ListPrice" disabled class="form-control" data-val-required="Polje 'Lista cena' je obavezno!!" />
+            <span asp-validation-for="ListPrice" class="text-danger"></span>
+
+        </div>
+
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Price"></label>
+            <input asp-for="Price" disabled class="form-control" data-val-required="Polje 'Cena 0-50' je obavezno!!" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+
+        </div>
+
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Price50"></label>
+            <input asp-for="Price50" disabled class="form-control" data-val-required="Polje Polje 'Cena 50-100' je obavezno!! je obavezno!!" />
+            <span asp-validation-for="Price50" class="text-danger"></span>
+
+        </div>
+
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Price100"></label>
+            <input asp-for="Price100" disabled class="form-control" data-val-required="Polje 'Cena 100+' je obavezno!!" />
+            <span asp-validation-for="Price100" class="text-danger"></span>
+
+        </div>
+
+
+
+        <!-- Kreiramo novi red od 12 kolona na nasoj stranici --->
+        <div class="row">
+
+            <!-- Prvih 6 kolona u redu su dodeljeni za element '<button>. Kada je srednja velicina ekrana onda ce elementu '<button> biti dodeljeno 3 kolone.
+             To se radi pomocu atributa 'col-md-3' --->
+            <div class="col-6 col-md-3">
+
+                <button type="submit" class="btn btn-danger form-control">Izbrisi</button>
+
+            </div>
+
+            <!-- Drugih 6 kolona u redu su dodeljeni za element '<a>'. Kada je srednja velicina ekrana onda ce elementu <a> biti dodeljeno 3 kolone.
+                 To se radi pomocu atributa 'col-md-3' --->
+            <div class="col-6 col-md-3">
+
+                <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary border form-control">
+                    Vrati se nazad
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+</form>
+
+

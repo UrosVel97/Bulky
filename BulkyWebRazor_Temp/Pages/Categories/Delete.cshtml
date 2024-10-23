@@ -1,0 +1,44 @@
+﻿@page
+@model BulkyWebRazor_Temp.Pages.Categories.DeleteModel
+
+
+
+<form method="post">
+    <input hidden asp-for="Kategorija.Id"/>
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary"> Izbrisi Kategoriju</h2>
+            <hr />
+        </div>
+
+        
+        <div class="mb-3 row p-1">
+
+            <label asp-for="Kategorija.Name"></label>
+
+            <input asp-for="Kategorija.Name" disabled class="form-control" data-val-required="Polje 'Naziv kategorije' je obavezno!!" />
+
+
+
+
+        </div>
+        <div class="mb-3 row p-1">
+            <label asp-for="Kategorija.DisplayOrder"></label>
+            <input asp-for="Kategorija.DisplayOrder" disabled class="form-control" data-val-required="Polje 'Redosled prikazivanja' je obavezno!!" />
+
+        </div>
+        <div class="row">
+            <div class="col-6 col-md-3">
+
+                <button type="submit" class="btn btn-danger form-control">Izbrisi</button>
+            </div>
+            <div class="col-6 col-md-3">
+                <a asp-page="/Categories/Index" class="btn btn-outline-secondary border form-control">
+                    Vrati se nazad
+                </a>
+            </div>
+
+        </div>
+    </div>
+</form>
+

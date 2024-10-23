@@ -1,0 +1,167 @@
+﻿@model ProductVM
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">@(Model.Product.Id == 0 ? "Kreiraj" : "Azuriraj") Proizvod  </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mora da se naglasi da atribut 'enctype' ima vrednost 'multipart/form-data'. U suprotnom
+        nece da radi file upload.
+    -->
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+            <input asp-for="Product.Id" hidden />
+            <!-- Obavezno da stavimo properti 'ImageURL' kao hidden, u suprotnom necemo ga videti kada iz pogleda saljemo action metodi Model.-->
+            <input asp-for="Product.ImageURL" hidden />
+            <div class="row">
+                <div class="col-7">
+                    <div class="border p-3 mt-4">
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.ISBN"></label>
+                            <input asp-for="Product.ISBN" class="form-control" data-val-required="Polje 'ISBN' je obavezno!!" />
+                            <span asp-validation-for="Product.ISBN" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.Author"></label>
+                            <input asp-for="Product.Author" class="form-control" data-val-required="Polje 'Autor' je obavezno!!" />
+                            <span asp-validation-for="Product.Author" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.Title"></label>
+                            <input asp-for="Product.Title" class="form-control" data-val-required="Polje 'Naslov' je obavezno!!" />
+                            <span asp-validation-for="Product.Title" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.Description"></label>
+                            <input asp-for="Product.Description" class="form-control" data-val-required="Polje 'Opis' je obavezno!!" />
+                            <span asp-validation-for="Product.Description" class="text-danger"></span>
+
+                        </div>
+
+
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.ListPrice"></label>
+                            <input asp-for="Product.ListPrice" class="form-control" data-val-required="Polje 'Lista cena' je obavezno!!" />
+                            <span asp-validation-for="Product.ListPrice" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.Price"></label>
+                            <input asp-for="Product.Price" class="form-control" data-val-required="Polje 'Cena 0-50' je obavezno!!" />
+                            <span asp-validation-for="Product.Price" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.Price50"></label>
+                            <input asp-for="Product.Price50" class="form-control" data-val-required="Polje Polje 'Cena 50-100' je obavezno!! je obavezno!!" />
+                            <span asp-validation-for="Product.Price50" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.Price100"></label>
+                            <input asp-for="Product.Price100" class="form-control" data-val-required="Polje 'Cena 100+' je obavezno!!" />
+                            <span asp-validation-for="Product.Price100" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <!--Kada radimo sa elementom '<select>', ako vec imamo listu neku koja je tipa 'IEnumerable<SelectListItem>',
+                                mi mozemo da iskoristimo atribut 'asp-items=""' i kao vrednost atributa da stavimo naziv liste
+                                iz modela. U pogledu ce se automatski popuniti polja elementa '<select>' sa vrednostima elemenata iz liste.
+                                Kada krajnji korisnik klikne na neku od opcija iz 'select' liste, automatski ce se 'Value' vrednost
+                                od 'SelectListItem' elementa, dodeliti kao vrednost propertiju 'Product.CategoryId'.
+                            -->
+                            <select asp-for="Product.CategoryId" asp-items="@Model.ListaKategorija" class="form-select border-0 shadow">
+                                <option disabled selected>---Izaberite Kategoriju---</option>
+                            </select>
+                            <label hidden asp-for="Product.CategoryId" class="ms-2"></label>
+                            <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="mb-3 row p-1">
+
+                            <label asp-for="Product.ImageURL"></label>
+                            <!--Ako hocemo da omogucimo da krajnji korisnik moze da ubacuje fajlove sa njegovog
+                                Desktop racunara, to radimo tako sto kod elementa '<input>' kao vrednost atributa
+                                'type' stavimo vrednost 'file'. Takodje je jako bitno da imamo atribut 'name' gde ce vrednost
+                                atributa biti isti kao naziv parametra u Action Metodi koja treba da manipulise tim fajlom
+                                koji saljemo.
+                            -->
+                            <input type="file" name="file" class="form-control" />
+
+
+                        </div>
+
+
+
+
+                        <div class="row">
+
+
+                            <div class="col-6 col-md-3">
+                                @if (Model.Product.Id == 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Kreiraj</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Azuriraj</button>
+                                }
+                            </div>
+
+                            <div class="col-6 col-md-3">
+
+                                <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary border form-control">
+                                    Vrati se nazad
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-5">
+                    <!--Prikazujemo sliku u poslednje dve kolone reda. SLika ima poseban CSS stil-->
+                    <img src="@Model.Product.ImageURL" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
+
+
+

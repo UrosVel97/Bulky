@@ -1,0 +1,69 @@
+﻿@page
+@model BulkyWebRazor_Temp.Pages.Categories.IndexModel
+
+
+
+
+<div class="container">
+    <partial name="notifikacija" />
+
+<div class="row pt-4 pb-3">
+    <div class="col-6">
+        <h2 class="text-primary">
+            Lista Kategorija
+        </h2>
+    </div>
+    <div class="col-6 text-end">
+        @*Kod 'Razor Pages' projekta nemamo vise 'asp-controller' atribut vec koristimo 'asp-page' atribut*@
+        <a asp-page="/Categories/create" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill"></i> Kreiraj novu Kategoriju
+        </a>
+    </div>
+    </div>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+            naziv kategorije
+            </th>
+            <th>
+            redosled prikazivanja
+            </th>
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @*Za pristup modelu 'Category' koristimo kljucnu rec 'Model' pa zatim naziv modela koji smo deklarisali
+            u klasi 'IndexModel' i inicijalizovali u metodi 'OnGet()'. Kljucna rec 'Model' u 'Razor Pages' projketu
+            predstavlja celu klasu 'IndexModel' u 'Index.cs' fajlu.
+        *@
+        @foreach(var obj in Model.Categories)
+        {
+            <tr>
+               <td>@obj.Name</td>
+               <td>@obj.DisplayOrder</td>
+               <td>
+                   <div class="w-75 btn-group" role="group">
+                        @*'asp-route' atribut se koristi i kod 'Razor Pages' projekta. U ovoj situaciji mi hocemo da prosledimo
+                            'id' modela iz tabele kategorija. Taj 'id' predstavlja kategoriju koju hocemo da izmenimo.
+                            u 'Edit.cshtml.cs' fajlu mi cemo u 'EditModel' klasi kod 'OnGet()' metode dodati atribut 'int id'.
+                            'asp-route-id' ce proslediti vrednost propertija 'Obj.Id' atributu 'id' metode 'OnGet()'.
+                        *@
+                       <a asp-page="/Categories/edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
+                            <i class="bi bi-pencil-square"></i> Azuriraj
+                       </a>
+                            <a asp-page="/Categories/delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
+                                <i class="bi bi-trash"></i> Izbrisi
+                       </a>
+                   </div>
+               </td>
+            </tr>
+        }
+    </tbody>
+
+
+</table>
+</div>

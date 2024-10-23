@@ -1,0 +1,27 @@
+﻿@*Posto smo u nekoj Action metodi definisali 'Dictionary' 'TempData',
+    onda ce se prikazati privremena poruka na vrhu naseg
+  '.cshtml' fajla gde budemo umetnuli ovaj parcijalni pogled
+  i stojice tu sve dok ne osvezimo ponovo stranicu.
+*@
+
+<!--Ova poruka ce se prikazati ako je kategorija uspesno kreirana, azurirana ili obrisana-->
+@if (TempData["success"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.success('@TempData["success"]');
+    </script>
+
+}
+
+
+<!--Ova poruka ce se prikazati ako kategorija nije uspesno kreirana, azurirana ili obrisana-->
+@if (TempData["error"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.error('@TempData["error"]');
+    </script>
+}

@@ -147,9 +147,9 @@ namespace BulkyWeb.Areas.Kupac.Controllers
             //Ako je u pitanju obican korisnik, onda moramo da ga preusmerimo na 'Stripe' stranicu za placanje
             if(applicationUser.CompanyId.GetValueOrDefault()==0)
             {
-                var domain = "https://localhost:7279/"; //Ovo je domen na lokalnoj masini, to ce morati da se promeni kada se deploy-uje
+                var domain = Request.Scheme + "://" + Request.Host.Value + "/"; //Dinamicki pribavljamo URL. Nebitno da li je localhost ili Web //Ovo je domen na lokalnoj masini, to ce morati da se promeni kada se deploy-uje
 
-				var options = new Stripe.Checkout.SessionCreateOptions //Opcije za kreiranje sesije
+                var options = new Stripe.Checkout.SessionCreateOptions //Opcije za kreiranje sesije
 				{
 					SuccessUrl = domain + $"kupac/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}", //Kada se uspesno izvrsi placanje, 'Stripe' ce da preusmeri korisnika na Action Metodu 'OrderConfirmation()'
 					CancelUrl = domain + "customer/cart/index", //Kada korisnik klikne na dugme 'Vrati se nazad' prebacice ga na ovai pogled 'Index.cshtml'

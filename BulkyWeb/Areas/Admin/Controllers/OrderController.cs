@@ -208,7 +208,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 .Get(u=>u.Id == OrderVM.OrderHeader.Id, includeProperties:"ApplicationUser");
             OrderVM.OrderDetail=_unitOfWork.OrderDetail.GetAll(u=>u.OrderHeaderId==OrderVM.OrderHeader.Id,includeProperties:"Product");
 
-            var domain = "https://localhost:7279/"; //Ovo je domen na lokalnoj masini, to ce morati da se promeni kada se deploy-uje
+            var domain = Request.Scheme + "://" + Request.Host.Value + "/"; //Dinamicki pribavljamo URL. Nebitno da li je localhost ili Web
 
             var options = new Stripe.Checkout.SessionCreateOptions //Opcije za kreiranje sesije
             {

@@ -138,7 +138,7 @@ app.Run();
 
 
 //Ova metoda je zaduzena za seed-uje nasu bazu podataka, tako sto ce da kreira
-//sve uloge za korisnike ako vec nisu kreirane i kreirace korisnika koji ce imati ulogu 'Admin'
+//sve uloge za korisnike ako vec nisu kreirane i kreirace korisnika koji ce imati ulogu 'Admin'.
 void SeedDatabase()
 {
     //Kreiramo objekat koji ce biti ustvari 'Scope servis'. Pomocu njega cemo pristupiti promenljivama koje taj servis instancira

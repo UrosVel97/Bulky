@@ -33,6 +33,9 @@ namespace Bulky.Models
         //je taj korisnik asociran sa kompanijom
         [ForeignKey("CompanyId")]
         [ValidateNever]
-        public Company Company { get; set; }
+        public Company? Company { get; set; }
+
+        [NotMapped]
+        public string Role {  get; set; }
     }
 }

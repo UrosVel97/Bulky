@@ -1,0 +1,95 @@
+﻿@model RoleManagementVM
+
+<form method="post">
+    <div class="border p-3 mt-4">
+        <input hidden asp-for="@Model.User.Id" />
+        <!--- Stranica je podeljena na red i taj red ima 12 kolona. Svih 12 kolona ce biti dodeljeni elementu <h2> Kreiraj Kategoriju </h2> --->
+        <div class="row pb-2">
+            <h2 class="text-primary"> Azuriraj ulogu korisnika</h2>
+            <hr />
+        </div>
+
+        <!--- U drugom redu svih 12 kolona ce biti dodeljeni elementima '<label>', '<input>' i '<span>' --->
+        <div class="mb-3 row p-1">
+
+            <label asp-for="@Model.User.Name"></label>
+            <input asp-for="@Model.User.Name" class="form-control" data-val-required="Polje 'Naziv kategorije' je obavezno!!" />
+            <span asp-validation-for="@Model.User.Name" class="text-danger"></span>
+
+        </div>
+
+        <!--- U trecem redu svih 12 kolona ce biti dodeljeni elementima '<label>', '<input>' i '<span>' --->
+        <div class="form-floating mb-3 col-md-6">
+            <select asp-for="@Model.RoleId" asp-items="@Model.Roles" class="form-select">
+                <option disabled selected>-Izaberite ulogu-</option>
+            </select>
+
+        </div>
+        @{
+            var stil = "display:none;";
+        }
+        @if(Model.User.CompanyId!=null)
+        {
+            stil = "display:block;";
+        }
+        <div  class="form-floating mb-3 col-md-6">
+            <select style="@stil"  asp-for="@Model.CompanyId" asp-items="@Model.Companies" class="form-select">
+                <option disabled selected>-Izaberite Kompaniju-</option>
+            </select>
+
+        </div>
+        
+
+        <!-- Kreiramo novi red od 12 kolona na nasoj stranici --->
+        <div class="row">
+
+            <!-- Prvih 6 kolona u redu su dodeljeni za element '<button>. Kada je srednja velicina ekrana onda ce elementu '<button> biti dodeljeno 3 kolone.
+             To se radi pomocu atributa 'col-md-3' --->
+            <div class="col-6 col-md-3">
+
+                <button type="submit" class="btn btn-primary form-control">Azuriraj</button>
+
+            </div>
+
+            <!-- Drugih 6 kolona u redu su dodeljeni za element '<a>'. Kada je srednja velicina ekrana onda ce elementu <a> biti dodeljeno 3 kolone.
+                 To se radi pomocu atributa 'col-md-3' --->
+            <div class="col-6 col-md-3">
+
+                <a asp-controller="User" asp-action="Index" class="btn btn-outline-secondary border form-control">
+                    Vrati se nazad
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+</form>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <!--Pisemo JavaScript funkciju koja ce da prikazuje DropDown listu
+        za selektovanje kompanije kojoj pripada korisnik, ako je taj korisnik
+        pre toga selektovan kao kompanija. Ako nije selektovan kao kompanija onda
+        se ni nece prikazati DropDown lista da izabere kojoj kompaniji pripada.
+    -->
+    <script>
+        $(document).ready(function () {
+            //Ova funkcija kaze da elemenat ciji 'id' ima vrednost '#Input_Role' ce biti promenljen.
+            $('#RoleId').change(function () {
+                //Ovde kaze da ako elemenat sa id-jem '#Input_Role' ima atribut 'selected', onda vrati tu vrednost koja je selektovana iz tela tog elementa
+                var selection = $('#RoleId Option:Selected').text();
+                if (selection == 'Company' && selection != null) {
+                    //Elemenat ciji je id '#Input_CompanyId' prikazi u pogled
+                    $('#CompanyId').show();
+                }
+                else {
+                    //Elemenat ciji je id '#Input_CompanyId' sakrij da se ne vidi u pogled
+                    $('#CompanyId').hide();
+                }
+            })
+        })
+    </script>
+} 

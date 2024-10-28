@@ -1,0 +1,99 @@
+﻿@model List<ApplicationUser>
+
+<div class="container">
+    <!-- Ova klasa 'row' kaze da ce nasa stranica biti podeljena u jednom redu i da ce taj red imati 12 kolona. -->
+    <div class="row pt-4 pb-3">
+        <!-- Prvih 6 kolona iz reda ce biti dodeljeni za '<h2> Lista Kategorija </h2>' --->
+        <div class="col-6">
+            <h2 class="text-primary">
+                Lista Korisnika
+            </h2>
+        </div>
+        <!-- Drugih 6 kolona iz reda ce biti dodeljeni za '<a> Kreiraj novu Kategoriju </a>' --->
+
+    </div>
+
+
+    <!--Brisemo sve sto se nalazilo u '<tbody> elementu. Neophodno je da stavimo samo
+    atribut 'id' i da vrednost atributa bude ista kao kod AJAX funkcije.-->
+    <table id="tblData" class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    Ime korisnika
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Telefon
+                </th>
+                <th>
+                    Kompanija
+                </th>
+                <th>
+                    Uloga
+                </th>
+
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var obj in Model)
+            {
+                <tr>
+                    <td>@obj.Name</td>
+                    <td>@obj.Email</td>
+                    <td>@obj.PhoneNumber</td>
+                    @if (obj.Company != null)
+                    {
+                        <td>@obj.Company.Name</td>
+                    }
+                    else
+                    {
+                        <td>/</td>
+                    }
+                    <td>@obj.Role</td>
+
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            @if (obj.LockoutEnd > DateTime.Now)
+                            {
+                                <a asp-area="Admin" asp-controller="User" asp-action="LockUnlock" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2" />
+                                    </svg>
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-area="Admin" asp-controller="User" asp-action="LockUnlock" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock-fill" viewBox="0 0 16 16">
+                                        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2" />
+                                    </svg>
+                                </a>
+                            }
+                        </div>
+                        <div class="w-75 btn-group" role="group">
+                            <a asp-area="Admin" asp-controller="User" asp-action="RoleManagement" asp-route-id="@obj.Id">Azurirajte ulogu</a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+
+
+    </table>
+</div>
+
+
+
+<!--Dodajemo odgovarajuci javascript fajl koji sadrzi AJAX funkcije za brisanje sloga iz tabele 'Company'-->
+@section Scripts {
+
+    <script src="~/js/company.js"></script>
+}

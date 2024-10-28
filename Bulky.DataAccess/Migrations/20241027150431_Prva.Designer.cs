@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241009085201_PrvaMigracijaPosleRestarta")]
-    partial class PrvaMigracijaPosleRestarta
+    [Migration("20241027150431_Prva")]
+    partial class Prva
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -23,7 +23,7 @@ namespace BulkyWeb.Areas.Kupac.Controllers
         public IActionResult Index()
         {
 
-            List<Product> productList = _unitOfWork.Proizvod.GetAll(includeProperties: "Category").ToList();
+            List<Product> productList = _unitOfWork.Proizvod.GetAll(includeProperties: "Category,ProductImages").ToList();
 
             return View(productList);
 
@@ -34,7 +34,7 @@ namespace BulkyWeb.Areas.Kupac.Controllers
         {
             ShoppingCart cart = new()
             {
-                Product = _unitOfWork.Proizvod.Get(u => u.Id == id, includeProperties: "Category"),
+                Product = _unitOfWork.Proizvod.Get(u => u.Id == id, includeProperties: "Category,ProductImages"),
                 Count = 1,
                 ProductId = id
             };

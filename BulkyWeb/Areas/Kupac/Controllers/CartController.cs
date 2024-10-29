@@ -44,9 +44,12 @@ namespace BulkyWeb.Areas.Kupac.Controllers
                 OrderHeader=new()
             };
 
+            IEnumerable<ProductImage> productImages = _unitOfWork.ProductImage.GetAll();
+
             //Sledeca foreach petlja je da izracunamo ukupnu cenu svih artikla u korpi
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
+                cart.Product.ProductImages = productImages.Where(u=>u.ProductId==cart.Product.Id).ToList();
                 cart.Price = GetPriceBasedOnQuantity(cart);
                 ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }

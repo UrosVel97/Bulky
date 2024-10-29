@@ -30,6 +30,8 @@ namespace Bulky.DataAccess.Reporsitory.IReporsitory
         IApplicationUserReporsitory ApplicationUser { get; }
         IOrderDetailReporsitory OrderDetail { get; }
         IOrderHeaderReporsitory OrderHeader { get; }
+
+        IProductImageReporsitory ProductImage { get; }
         void Save();
     }
 }

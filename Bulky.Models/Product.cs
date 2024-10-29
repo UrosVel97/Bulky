@@ -17,7 +17,7 @@ namespace Bulky.Models
             
         }
         public Product(int id, string title, string descr, 
-            string isbn, string author, double listprice,double price, double price50, double price100 ,int catId,string img)
+            string isbn, string author, double listprice,double price, double price50, double price100 ,int catId)
         {
             this.Author = author;
             this.Id = id;   
@@ -29,7 +29,6 @@ namespace Bulky.Models
             this.Price100 = price100;
             this.ISBN = isbn;
             this.CategoryId = catId;
-            this.ImageURL = img;
         }
 
         [Key]
@@ -76,7 +75,9 @@ namespace Bulky.Models
 
         [ValidateNever]
         public Category Category { get; set; }
+
+
         [ValidateNever]
-        public string ImageURL { get; set; }
+        public List<ProductImage> ProductImages { get; set; }
     }
 }

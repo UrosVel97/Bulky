@@ -4,6 +4,7 @@ using Bulky.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241028114706_Add_ProductImages_Model")]
+    partial class Add_ProductImages_Model
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,6 +231,10 @@ namespace Bulky.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("ListPrice")
                         .HasColumnType("float");
 
@@ -258,6 +265,7 @@ namespace Bulky.DataAccess.Migrations
                             CategoryId = 1,
                             Description = "A book about relationships",
                             ISBN = "a41fa2341",
+                            ImageURL = "",
                             ListPrice = 30.0,
                             Price = 35.0,
                             Price100 = 20.0,
@@ -271,6 +279,7 @@ namespace Bulky.DataAccess.Migrations
                             CategoryId = 2,
                             Description = "A book about relationships",
                             ISBN = "a41fa2341",
+                            ImageURL = "",
                             ListPrice = 30.0,
                             Price = 35.0,
                             Price100 = 20.0,

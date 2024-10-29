@@ -11,7 +11,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
 {
     //Obavezno mora da se naglasi kojoj 'Area-i' pripada kontroler
     [Area("Admin")]
-    [Authorize(Roles =SD.Role_Admin)]//Sa ovom anotacijom podataka smo naglasili da samo korisnik koji ima ulogu "Admin" moze da pristupi Action metodama ovog kontrolera
+    [Authorize(Roles = SD.Role_Admin)]//Sa ovom anotacijom podataka smo naglasili da samo korisnik koji ima ulogu "Admin" moze da pristupi Action metodama ovog kontrolera
     public class ProductController : Controller
     {
 
@@ -75,8 +75,13 @@ namespace BulkyWeb.Areas.Admin.Controllers
             }
             else
             {
-                //azuriraj proizvod
-                productVM.Product = _unit.Proizvod.Get(u => u.Id == id);
+                /*Posto klasa 'Product' ima listu modela 'ProductImage', i svaki 'ProductImage' model ima strani
+                 * kljuc koji pokazuje na tacno jedan slog u tebeli 'Product'. Onda mi mozemo da parametar 'includeProperties'
+                 * metode 'Get()' stavimo naziv modela 'ProductImages'. EntitiFrameworkCore je dovoljno pametan da vidi da je 
+                 * u pitanju veza jedan prema vise, i popunice listu 'Product.ProductImages' sa svim objektima koji imaju strani kljuc
+                 * koji pokazuje na taj objekat tipa 'Product'. Vrednost parametra 'includeProperties' mora biti tacan naziv 'DbSet'-a koji
+                 * smo deklarisali u 'ApplicationDbContext' klasi.*/
+                productVM.Product = _unit.Proizvod.Get(u => u.Id == id,includeProperties: "ProductImages");
                 return View(productVM);
             }
 
@@ -89,46 +94,14 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         [HttpPost]//Iz pogleda se vraca objekat klase 'ProductVM' i vraca se fajl koji je
                   //krajnji korisnik selektovao sa svog Desktop racunara.
-        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
+        public IActionResult Upsert(ProductVM productVM, List<IFormFile>? files)
         {
             /* Validacija na strani servera se vrši na sve propertije
              * klase 'ProductVM'. Mi moramo da naglasimo za koje propertije mi
              * ne zelimo da vrsimo validaciju. To se radi tako sto iznad propertija
              * klase stavimo anotaciju podataka '[ValidateNever]'.*/
-            if (ModelState.IsValid)
+                if (ModelState.IsValid)
             {
-                string wwwRootPath = _webHostEnvironment.WebRootPath; //Vracamo apsolutnu putanju do 'wwwroot' direktorijuma 
-
-                if (file != null)
-                {
-                    /* Svaki put kada krajnji korisnik ucita neki fajl sa Desktop racunara, 
-                     * mi cemo kreirati novi fajl koji ce imati neki random 
-                     * naziv i koji ce cuvati podatke tog fajla koji smo ucitali sa Desktopa 
-                     */
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName); //Kreiramo random naziv za fajl i nadovezujemo uz naziv i ekstenziju fajla
-                    string productPath = Path.Combine(wwwRootPath, @"Slike\products");//Promenljiva 'productPath' cuva apsolutnu putanju do direktorijuma gde cemo cuvati slike proizvoda
-
-                    if (!string.IsNullOrEmpty(productVM.Product.ImageURL)) //Ako properti 'ImageURL' nije null onda ulazimo u telo if klauzule
-                    {
-                        //Brisemo staru sliku. Promenljiva 'oldImagePath' ce cuvati putanju do stare slike, samo sto naziv putanje mora biti bez kose crte u levo '\\'. Prva kosa crta je escape karakter za drugu.
-                        var oldImagePath = Path.Combine(wwwRootPath, productVM.Product.ImageURL.TrimStart('\\'));
-
-                        //Ako postoji fajl u Solution Exploreru sa zadatim nazivom, onda udji u telo 'if' klauzule
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            //U slucaju ako postoji fajl u Solution Exploreru sa odgovarajucim nazivom, onda ga brisemo
-                            System.IO.File.Delete(oldImagePath);
-                        }
-                    }
-
-                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create)) //Kreiramo novi fajl na putanji 'productPath\fileName', i u njega prekopiramo bitove(binarnu vrednost) fajla koji smo ucitali sa Desktop racunara
-                    {
-                        file.CopyTo(fileStream);//Kopiramo binarnu vrednost fajla koji smo ucitali sa Desktop racunara u novi fajl koji smo kreirali sa random imenom
-
-                    }
-
-                    productVM.Product.ImageURL = @"\Slike\products\" + fileName; //U propertiju 'ImageURL' klase 'Product', cuvamo samo tacan naziv fajla
-                }
 
                 if (productVM.Product.Id == 0)
                 {
@@ -141,6 +114,57 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
                 _unit.Save();// Cuva podatke u bazu
 
+                string wwwRootPath = _webHostEnvironment.WebRootPath; //Vracamo apsolutnu putanju do 'wwwroot' direktorijuma 
+
+                if (files != null)
+                {
+
+                    foreach (var file in files)
+                    {
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName); //Kreiramo random naziv za fajl i nadovezujemo uz naziv i ekstenziju fajla
+                        string productPath = @"Slike\product\product-" + productVM.Product.Id.ToString(); //Kada korisnik selektuje vise slika za novi proizvod, sve slike za jedan tip proizvoda ce biti u svom folder. Naziv foldera je 'id' proizvoda
+                        string finalPath = Path.Combine(wwwRootPath, productPath);//Promenljiva 'productPath' cuva apsolutnu putanju do direktorijuma gde cemo cuvati slike proizvoda
+
+                        //proveravamo da li direktorijum sa odredjenim nazivom postoji. Ako ne onda kreiramo taj direktorijum
+                        if (!Directory.Exists(finalPath))
+                        {
+                            Directory.CreateDirectory(finalPath);//Kreiramo novi direktorijum na zadatoj apsolutnoj putanji
+                        }
+
+                        using (var fileStream = new FileStream(Path.Combine(finalPath, fileName), FileMode.Create)) //Kreiramo novi fajl na putanji 'productPath\fileName', i u njega prekopiramo bitove(binarnu vrednost) fajla koji smo ucitali sa Desktop racunara
+                        {
+                            file.CopyTo(fileStream);//Kopiramo binarnu vrednost fajla koji smo ucitali sa Desktop racunara u novi fajl koji smo kreirali sa random imenom
+
+                        }
+
+                        ProductImage productImage = new ProductImage()
+                        {
+                            ImageUrl = @"\" + productPath + @"\" + fileName,
+                            ProductId = productVM.Product.Id
+                        };
+
+                        //Proveravamo da li instancirana lista 'ProductImages'. Ako nije onda je instanciramo
+                        if (productVM.Product.ProductImages == null)
+                        {
+                            productVM.Product.ProductImages = new List<ProductImage>();
+                        }
+
+                        productVM.Product.ProductImages.Add(productImage);
+                        _unit.ProductImage.Add(productImage);
+
+                    }
+
+                    _unit.Proizvod.Update(productVM.Product);
+                    _unit.Save();
+
+
+
+
+                    TempData["success"] = "Product created/updated successfully";
+
+
+                    
+                }
                 return RedirectToAction("Index", "Product");
             }
             else
@@ -159,6 +183,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
 
         }
+
 
         #endregion
 
@@ -184,6 +209,37 @@ namespace BulkyWeb.Areas.Admin.Controllers
         #endregion
 
 
+        //Metoda za brisanje slike proizvoda
+        public IActionResult DeleteImage(int imageId)
+        {
+            //Vracamo slog iz tabele 'ProductImages' koji cemo da obrisemo
+            var imageToBeDelete =_unit.ProductImage.Get(u=>u.Id == imageId);
+
+            int productID = imageToBeDelete.ProductId;
+
+            if(imageToBeDelete != null)
+            {
+                if (!string.IsNullOrEmpty(imageToBeDelete.ImageUrl))
+                {
+                    var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, imageToBeDelete.ImageUrl.TrimStart('\\'));
+
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        //U slucaju ako fajl, tj. slika, postoji na zadatoj apsolutnoj putanji, mi tu sliku brisemo
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                _unit.ProductImage.Remove(imageToBeDelete);
+                _unit.Save();
+
+                TempData["success"] = "uspesno je obrisana slika";
+
+            }
+
+            return RedirectToAction(nameof(Upsert), new { id = productID });
+        }
+
 
         #region API CALLS
 
@@ -199,13 +255,22 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Greska u toku brisanja proizvoda!" });
             }
 
-            var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageURL.TrimStart('\\'));
 
-            if (System.IO.File.Exists(oldImagePath))
+            string productPath = @"Slike\product\product-" + id.ToString(); //Kada korisnik selektuje vise slika za novi proizvod, sve slike za jedan tip proizvoda ce biti u svom folder. Naziv foldera je 'id' proizvoda
+            string finalPath = Path.Combine(_webHostEnvironment.WebRootPath, productPath);//Promenljiva 'productPath' cuva apsolutnu putanju do direktorijuma gde cemo cuvati slike proizvoda
+
+            //proveravamo da li direktorijum sa odredjenim nazivom postoji
+            if (Directory.Exists(finalPath))
             {
-                //U slucaju ako fajl, tj. slika, postoji sa zadatim nazivom, mi tu sliku brisemo
-                System.IO.File.Delete(oldImagePath);
+                string[] filePaths=Directory.GetFiles(finalPath); //Vracamo apsolutne putanje svih fajlova iz direkotijuma
+                foreach (string filePath in filePaths)
+                {
+                    System.IO.File.Delete(filePath);
+                }
+
+                Directory.Delete(finalPath);//Brisemo novi direktorijum na zadatoj apsolutnoj putanji
             }
+
 
             _unit.Proizvod.Remove(productToBeDeleted);
             _unit.Save();

@@ -9,6 +9,6 @@ namespace Bulky.DataAccess.Reporsitory.IReporsitory
 {
     public interface IApplicationUserReporsitory :IReporsitory<ApplicationUser>
     {
-
+        void Update(ApplicationUser user);
     }
 }

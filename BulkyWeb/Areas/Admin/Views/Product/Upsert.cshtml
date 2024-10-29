@@ -10,13 +10,13 @@
     </div>
 
     <!-- Mora da se naglasi da atribut 'enctype' ima vrednost 'multipart/form-data'. U suprotnom
-        nece da radi file upload.
+    nece da radi file upload.
     -->
     <div class="card-body p-4">
         <form method="post" enctype="multipart/form-data">
             <input asp-for="Product.Id" hidden />
             <!-- Obavezno da stavimo properti 'ImageURL' kao hidden, u suprotnom necemo ga videti kada iz pogleda saljemo action metodi Model.-->
-            <input asp-for="Product.ImageURL" hidden />
+
             <div class="row">
                 <div class="col-7">
                     <div class="border p-3 mt-4">
@@ -90,10 +90,10 @@
                         <div class="mb-3 row p-1">
 
                             <!--Kada radimo sa elementom '<select>', ako vec imamo listu neku koja je tipa 'IEnumerable<SelectListItem>',
-                                mi mozemo da iskoristimo atribut 'asp-items=""' i kao vrednost atributa da stavimo naziv liste
-                                iz modela. U pogledu ce se automatski popuniti polja elementa '<select>' sa vrednostima elemenata iz liste.
-                                Kada krajnji korisnik klikne na neku od opcija iz 'select' liste, automatski ce se 'Value' vrednost
-                                od 'SelectListItem' elementa, dodeliti kao vrednost propertiju 'Product.CategoryId'.
+                            mi mozemo da iskoristimo atribut 'asp-items=""' i kao vrednost atributa da stavimo naziv liste
+                            iz modela. U pogledu ce se automatski popuniti polja elementa '<select>' sa vrednostima elemenata iz liste.
+                            Kada krajnji korisnik klikne na neku od opcija iz 'select' liste, automatski ce se 'Value' vrednost
+                            od 'SelectListItem' elementa, dodeliti kao vrednost propertiju 'Product.CategoryId'.
                             -->
                             <select asp-for="Product.CategoryId" asp-items="@Model.ListaKategorija" class="form-select border-0 shadow">
                                 <option disabled selected>---Izaberite Kategoriju---</option>
@@ -105,14 +105,15 @@
 
                         <div class="mb-3 row p-1">
 
-                            <label asp-for="Product.ImageURL"></label>
+                            <label>Izaberite sliku</label>
                             <!--Ako hocemo da omogucimo da krajnji korisnik moze da ubacuje fajlove sa njegovog
-                                Desktop racunara, to radimo tako sto kod elementa '<input>' kao vrednost atributa
-                                'type' stavimo vrednost 'file'. Takodje je jako bitno da imamo atribut 'name' gde ce vrednost
-                                atributa biti isti kao naziv parametra u Action Metodi koja treba da manipulise tim fajlom
-                                koji saljemo.
+                            Desktop racunara, to radimo tako sto kod elementa '<input>' kao vrednost atributa
+                            'type' stavimo vrednost 'file'. Takodje je jako bitno da imamo atribut 'name' gde ce vrednost
+                            atributa biti isti kao naziv parametra u Action Metodi koja treba da manipulise tim fajlom
+                            koji saljemo. Da bi korisnik mogao da selektuje vise fajlova moramo da ubacimo atribut
+                            'multiple' u element 'input'
                             -->
-                            <input type="file" name="file" class="form-control" />
+                            <input type="file" name="files" class="form-control" multiple />
 
 
                         </div>
@@ -147,8 +148,20 @@
 
                 </div>
                 <div class="col-5">
-                    <!--Prikazujemo sliku u poslednje dve kolone reda. SLika ima poseban CSS stil-->
-                    <img src="@Model.Product.ImageURL" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+                    @if (Model.Product.ProductImages != null)
+                    {
+                        foreach (var image in Model.Product.ProductImages)
+                        {
+                            <div class="border p-1 m-2 text-center">
+                                <!--prikazujemo sliku u poslednje dve kolone reda. slika ima poseban css stil-->
+                                <img src="@image.ImageUrl" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+                                <div class="p-1 m-2">
+                                    <a asp-area="Admin" asp-controller="Product" asp-action="DeleteImage" asp-route-imageId="@image.Id" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        }
+                    }
+
 
                 </div>
             </div>

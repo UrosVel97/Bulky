@@ -22,8 +22,9 @@ namespace Bulky.DataAccess.Reporsitory
             _db = db;
         }
 
-
-
-
+        public void Update(ApplicationUser user)
+        {
+            _db.ApplicationUsers.Update(user);
+        }
     }
 }

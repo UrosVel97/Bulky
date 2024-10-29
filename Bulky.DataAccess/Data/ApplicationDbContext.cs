@@ -31,6 +31,8 @@ namespace Bulky.DataAccess
         public DbSet<OrderHeader> OrderHeaders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
+        public DbSet<ProductImage> ProductImages { get; set; }
+
         //Ova metoda nam sluzi da seed-ujemo (dodeljujemo slogove tabeli) u bazi podataka.
         //U ovom primeru mi u tabeli 'Category' hocemo da dodamo 3 sloga gde ce prvi slog da
         //ima vrednosti kolone: id=1,name='Action',displayorder=1.
@@ -44,9 +46,9 @@ namespace Bulky.DataAccess
 
             modelBuilder.Entity<Product>().HasData(
                 new Product(10, "The way of the superior man", "A book about relationships", "a41fa2341",
-                "David Deida", 30, 35, 25, 20, 1, ""),
+                "David Deida", 30, 35, 25, 20, 1),
                 new Product(11, "The way of the superior man", "A book about relationships", "a41fa2341",
-                "David Deida", 30, 35, 25, 20, 2, ""));
+                "David Deida", 30, 35, 25, 20, 2));
 
             modelBuilder.Entity<Category>().HasData(
                new Category(1, "Akcija", 1),

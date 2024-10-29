@@ -29,6 +29,8 @@ namespace Bulky.DataAccess.Reporsitory
 
         public IOrderHeaderReporsitory OrderHeader { get; private set; }
 
+        public IProductImageReporsitory ProductImage { get; private set; }
+
         public UnitOfWork(ApplicationDbContext db)
         {
             this._db= db;
@@ -39,6 +41,7 @@ namespace Bulky.DataAccess.Reporsitory
             ApplicationUser=new ApplicationUserReporsitory(db);
             OrderHeader=new OrderHeaderReporsitory(db);
             OrderDetail=new OrderDetailReporsitory(db);
+            ProductImage=new ProductImageReporsitory(db);
 
         }
 

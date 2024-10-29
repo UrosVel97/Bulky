@@ -22,11 +22,11 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         private readonly UserManager<IdentityUser> _userManager;
 
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unit;
 
-        public UserController(ApplicationDbContext db, RoleManager<IdentityRole> role, UserManager<IdentityUser> user)
+        public UserController(IUnitOfWork unit, RoleManager<IdentityRole> role, UserManager<IdentityUser> user)
         {
-            _db = db;
+            _unit = unit;
             _roleManager = role;
             _userManager = user;
         }
@@ -37,17 +37,12 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
 
-            List<ApplicationUser> users = _db.ApplicationUsers.Include(u=>u.Company).ToList();
-
-            var roles = _db.Roles.ToList();
-            var userRoles= _db.UserRoles.ToList();
+            List<ApplicationUser> users = _unit.ApplicationUser.GetAll(null,includeProperties: "Company").ToList();
 
             foreach (var user in users)
             {
-                var userRole = userRoles.FirstOrDefault(u => u.UserId == user.Id);
-                var role = roles.FirstOrDefault(u => u.Id == userRole.RoleId);
 
-                user.Role = role.Name;
+                user.Role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
 
             }
 
@@ -56,23 +51,23 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
 
 
-     
+
         public IActionResult RoleManagement(string id)
         {
 
             RoleManagementVM managementVM = new RoleManagementVM()
             {
-                User= _db.ApplicationUsers.Find(id),
+                User = _unit.ApplicationUser.Get(u=>u.Id==id),
 
-                Roles=_db.Roles.Select(u=> new SelectListItem()
+                Roles = _roleManager.Roles.Select(u => new SelectListItem()
                 {
-                    Text=u.Name,
-                    Value=u.Id
+                    Text = u.Name,
+                    Value = u.Id
                 }),
-                Companies= _db.Companies.Select(u=> new SelectListItem()
+                Companies = _unit.Kompanija.GetAll().Select(u => new SelectListItem()
                 {
-                    Text=u.Name,
-                    Value=u.Id.ToString()
+                    Text = u.Name,
+                    Value = u.Id.ToString()
                 })
 
             };
@@ -86,53 +81,47 @@ namespace BulkyWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult RoleManagement(RoleManagementVM manage)
         {
-            
-            ApplicationUser user= _db.ApplicationUsers.Include(u=>u.Company).FirstOrDefault(u=>u.Id==manage.User.Id);
+
+            ApplicationUser user = _unit.ApplicationUser.Get(u => u.Id == manage.User.Id, includeProperties: "Company",tracked:true);
 
             if (user.Name != manage.User.Name)
             {
 
                 user.Name = manage.User.Name;
-                _db.SaveChanges();
+                _unit.Save();
             }
 
             //Vracamo listu uloga koje su dodeljene korisniku
-            IEnumerable<string> lista=  _userManager.GetRolesAsync(user).GetAwaiter().GetResult();
+            IEnumerable<string> lista = _userManager.GetRolesAsync(user).GetAwaiter().GetResult();
 
-            //Vracamo ulogu koja je inicijalno dodeljena korisniku
-            var role = _db.Roles.FirstOrDefault(u=> u.Name==lista.FirstOrDefault());
+            //Vracamo naziv uloge koja je inicijalno dodeljena korisniku
+            var role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
 
             //Vracamo ulogu koju je korisnik selektovao u pogledu
-            var selecteRole= _db.Roles.FirstOrDefault(u => u.Id == manage.RoleId);
+            var selecteRole = _roleManager.Roles.Where(u => u.Id == manage.RoleId).FirstOrDefault();
 
             //Ako inicijalna uloga i selektovana uloga nisu iste, onda dodeljujemo novu ulogu korisniku
-            if (role.Name != selecteRole.Name)
+            if (role != selecteRole.Name)
             {
                 //Uklanjamo staru ulogu koja je korisniku bila dodeljena
-                _userManager.RemoveFromRoleAsync(user, role.Name).GetAwaiter().GetResult();
+                _userManager.RemoveFromRoleAsync(user, role).GetAwaiter().GetResult();
 
                 //dodeljujemo novu ulogu korisniku
                 _userManager.AddToRoleAsync(user, selecteRole.Name).GetAwaiter().GetResult();
 
                 //Ako je inicijalna uloga bila 'Company' onda brisemo strani kljuc 'CompanyId'
-                if(selecteRole.Name != SD.Role_Company)
+                if (selecteRole.Name != SD.Role_Company)
                 {
                     user.CompanyId = null;
                 }
                 else
                 {
-                    user.CompanyId=manage.CompanyId;
+                    user.CompanyId = manage.CompanyId;
                 }
 
-                _db.ApplicationUsers.Update(user);  
-                _db.SaveChanges();
+                _unit.ApplicationUser.Update(user);
+                _unit.Save();
             }
-
-
-
-
-
-            
 
 
             return RedirectToAction(nameof(Index));
@@ -143,16 +132,16 @@ namespace BulkyWeb.Areas.Admin.Controllers
         //Metoda koja Zakljucava/Otkljucava korisnika, tako da on moze ili ne moze da se uloguje na nasu web-aplikaciju
         public IActionResult LockUnlock(string? id)
         {
-          
-            var objFromDb= _db.ApplicationUsers.FirstOrDefault(u=>u.Id == id);
 
-            if(objFromDb==null)
+            var objFromDb = _unit.ApplicationUser.Get(u => u.Id == id,null,tracked:true);
+
+            if (objFromDb == null)
             {
                 return Json(new { success = false, message = "Greska pri Zakljucavanju/Otkljucavanju" });
 
             }
 
-            if(objFromDb.LockoutEnd!=null && objFromDb.LockoutEnd>DateTime.Now)
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
             {
                 //Korisnik je zakljucan i ne moze da se uloguje. Mi cemo da ga otkljucamo
                 objFromDb.LockoutEnd = DateTime.Now; //Otkljucujemo korisnika
@@ -162,7 +151,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 objFromDb.LockoutEnd = DateTime.Now.AddYears(1000); //Zakljucujemo korisnika
             }
 
-            _db.SaveChanges(); //Posto je ukljucen tracking od strane EntityFramework Core-a onda ne moramo da pozivamo metodu '_db.ApplicationUsers.Update()'
+            _unit.Save(); //Posto je ukljucen tracking od strane EntityFramework Core-a onda ne moramo da pozivamo metodu '_db.ApplicationUsers.Update()'
             return RedirectToAction(nameof(Index));
 
 

@@ -21,23 +21,23 @@ namespace Bulky.DataAccess.Reporsitory
         public void Update(Product product)
         {
             Product proizvod = _db.Products.FirstOrDefault(u => u.Id == product.Id);
-            proizvod.ISBN= product.ISBN;
-            proizvod.Title= product.Title;
-            proizvod.Author= product.Author;
-            proizvod.Description= product.Description;
-            proizvod.Price50= product.Price50;
-            proizvod.Price100= product.Price100;
-            proizvod.ListPrice= product.ListPrice;
-            proizvod.CategoryId= product.CategoryId;
-            proizvod.Id= product.Id;
 
-            //U slucaju ako 'ImageURL' nije null, onda ga azuriraj
-            if (product.ImageURL != null)
+            if (proizvod != null)
             {
-                proizvod.ImageURL = product.ImageURL;
-            }
+                proizvod.ISBN = product.ISBN;
+                proizvod.Title = product.Title;
+                proizvod.Author = product.Author;
+                proizvod.Description = product.Description;
+                proizvod.Price50 = product.Price50;
+                proizvod.Price100 = product.Price100;
+                proizvod.ListPrice = product.ListPrice;
+                proizvod.CategoryId = product.CategoryId;
+                proizvod.Id = product.Id;
+                proizvod.ProductImages = product.ProductImages;
 
-            _db.Products.Update(proizvod);
+
+                _db.Products.Update(proizvod);
+            }
         }
     }
 }
